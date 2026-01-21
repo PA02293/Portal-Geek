@@ -1,0 +1,22 @@
+{
+  "name": "portal-geek-fullstack",
+  "version": "1.0.0",
+  "description": "Portal Geek com Integração Lavalink e Bot Discord",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "discord.js": "^14.25.1",
+    "express": "^4.22.1",
+    "kazagumo": "^3.4.0",
+    "shoukaku": "^4.2.0",
+    "vite": "^5.4.8"
+  }
+}

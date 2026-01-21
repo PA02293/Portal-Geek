@@ -1,0 +1,173 @@
+/* 1. VARIÁVEIS PRO - PALETA NEON & VIDRO */
+:root {
+    --bg-dark: #070708;
+    --bg-card: rgba(255, 255, 255, 0.03);
+    --bg-modal: #0c0c0e;
+    --violet: #7c3aed;
+    --fuchsia: #d946ef;
+    --emerald: #10b981;
+    --border: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-glow: rgba(124, 58, 237, 0.3);
+}
+
+/* 2. RESET & BASE PERFORMANCE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: #f8fafc;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* 3. FUNDO AMBIENTE DINÂMICO */
+.bg-main {
+    min-height: 100vh;
+    background: 
+        radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(217, 70, 239, 0.08) 0%, transparent 40%),
+        #070708;
+}
+
+/* 4. ABAS (TABS) OTIMIZADAS */
+.tab-btn {
+    position: relative;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-btn.active {
+    background: rgba(124, 58, 237, 0.15) !important;
+    color: #fff !important;
+    border: 1px solid var(--violet) !important;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+/* 5. ANIMAÇÕES DE LISTA (ENTRADA SUAVE) */
+#music-results > div {
+    animation: entrance 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes entrance {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Delay escalonado para os itens da lista */
+#music-results > div:nth-child(1) { animation-delay: 0.1s; }
+#music-results > div:nth-child(2) { animation-delay: 0.15s; }
+#music-results > div:nth-child(3) { animation-delay: 0.2s; }
+#music-results > div:nth-child(4) { animation-delay: 0.25s; }
+
+/* 6. SWIPER COLEÇÃO PRO */
+.favSwiper {
+    overflow: visible !important;
+}
+
+.swiper-slide {
+    transition: transform 0.4s ease;
+}
+
+.swiper-slide img {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+}
+
+.swiper-slide:active {
+    transform: scale(0.9) rotate(-2deg);
+}
+
+/* 7. MODAIS (SISTEMA DE CAMADAS) */
+#anime-modal, #player-modal {
+    will-change: transform;
+}
+
+#anime-modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+/* Estilo para Tags de Gênero */
+.genre-tag {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+/* 8. SCROLLBAR PERSONALIZADA (ESTILO NEON) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--violet), var(--fuchsia));
+    border-radius: 20px;
+}
+
+/* 9. CARDS DE AÇÃO (SORTEIO) */
+.action-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    position: relative;
+}
+
+.action-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: translateX(-100%);
+    transition: 0.6s;
+}
+
+.action-card:hover::after {
+    transform: translateX(100%);
+}
+
+/* 10. PLAYER YOUTUBE ROUNDED */
+#youtube-player {
+    border-radius: 2.5rem;
+    overflow: hidden;
+    mask-image: radial-gradient(white, black); /* Fix para bordas arredondadas em iframes */
+}
+
+/* 11. FEEDBACK VISUAL DE CONEXÃO */
+#bridge-status {
+    animation: glow 3s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 5px rgba(124, 58, 237, 0.1); }
+    to { box-shadow: 0 0 15px rgba(124, 58, 237, 0.3); }
+}
+
+/* 12. UTILITÁRIOS */
+.hidden { display: none !important; }
+
+input:focus {
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
+}
