@@ -52,7 +52,7 @@ body {
     box-shadow: 0 0 20px var(--accent-glow);
 }
 
-/* 5. ANIMAÇÕES DE LISTA (ENTRADA SUAVE) */
+/* 5. ANIMAÇÕES DE LISTA */
 #music-results > div {
     animation: entrance 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
     opacity: 0;
@@ -63,14 +63,46 @@ body {
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* 6. MODAIS E GLASSMORPHISM */
-#anime-modal, #player-modal {
-    will-change: transform;
+/* 6. SISTEMA DE DOWNLOAD (DROPUP) */
+#download-menu {
+    backdrop-filter: blur(20px);
+    background: rgba(13, 13, 15, 0.95);
+    transform-origin: bottom;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Botão Favoritar no Modal (Supreme Glow) */
-#modal-fav-btn {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+#download-menu:not(.hidden) {
+    display: flex;
+    animation: dropupShow 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes dropupShow {
+    from { opacity: 0; transform: translateY(20px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Botão de Download Principal */
+button[onclick="toggleDownloadMenu()"] {
+    position: relative;
+    overflow: hidden;
+}
+
+button[onclick="toggleDownloadMenu()"]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
+}
+
+/* 7. MODAIS E GLASSMORPHISM */
+#anime-modal, #player-modal {
+    will-change: transform;
 }
 
 #modal-fav-btn.is-fav {
@@ -80,7 +112,7 @@ body {
     transform: scale(1.1);
 }
 
-/* Coração Flutuante (Feedback de Coleção) */
+/* Coração Flutuante */
 .floating-heart {
     position: fixed;
     width: 20px;
@@ -97,21 +129,20 @@ body {
     100% { transform: translate(var(--dir), -100px) scale(0); opacity: 0; }
 }
 
-/* 7. PLAYER YOUTUBE ROUNDED & CLEAN */
+/* 8. PLAYER YOUTUBE & CONTROLES */
 #youtube-player {
     border-radius: 2.5rem;
     overflow: hidden;
-    pointer-events: none; /* Evita cliques que abrem o app do YT */
+    pointer-events: none;
 }
 
-/* Estilo para a Sinopse no Modal */
 #synopsis-box {
     mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
     max-height: 200px;
     overflow-y: auto;
 }
 
-/* 8. FEEDBACK VISUAL DE CONEXÃO */
+/* 9. FEEDBACK VISUAL */
 #bridge-status {
     animation: glow 3s infinite alternate;
 }
@@ -121,7 +152,7 @@ body {
     to { box-shadow: 0 0 15px rgba(124, 58, 237, 0.4); border-color: var(--violet); }
 }
 
-/* 9. SWIPER COLEÇÃO */
+/* 10. SWIPER COLEÇÃO */
 .favSwiper {
     overflow: visible !important;
 }
@@ -134,11 +165,7 @@ body {
     box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 
-.swiper-slide:active {
-    transform: scale(0.85);
-}
-
-/* 10. SCROLLBAR NEON */
+/* 11. SCROLLBAR NEON */
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
 }
@@ -147,10 +174,9 @@ body {
     border-radius: 20px;
 }
 
-/* 11. UTILS */
+/* 12. UTILS */
 .hidden { display: none !important; }
 
-/* Loader de Sincretismo */
 .loader-circle {
     width: 40px;
     height: 40px;
