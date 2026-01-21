@@ -15,14 +15,16 @@
         .bg-main { background: radial-gradient(circle at top right, #1e1b4b, #070708 60%); min-height: 100vh; }
         .loader-circle { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.05); border-top-color: #7c3aed; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        /* Garantir que o container de toasts não bloqueie cliques */
-        #toast-container { pointer-events: none; }
-        #toast-container > div { pointer-events: auto; }
+        
+        /* Estilo para o botão de favorito ativo no modal */
+        #modal-fav-btn.is-fav {
+            background: rgba(244, 63, 94, 0.2);
+            border-color: rgba(244, 63, 94, 0.4);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
+        }
     </style>
 </head>
 <body class="bg-main text-slate-200 antialiased overflow-x-hidden">
-
-    <div id="toast-container" class="fixed top-10 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-2 w-[90%] max-w-xs"></div>
 
     <header class="p-6 space-y-6 pt-8">
         <div class="flex justify-between items-start">
@@ -33,9 +35,9 @@
                 </div>
                 <p class="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Portal <span class="text-violet-600">Geek</span></p>
             </div>
-            <div id="bridge-status" class="opacity-30 px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2 transition-opacity duration-500">
+            <div id="bridge-status" class="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2 opacity-30 transition-opacity">
                 <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">V8.5</span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">V9.5</span>
             </div>
         </div>
 
@@ -58,7 +60,8 @@
         </div>
     </header>
 
-    <section id="music-results" class="hidden px-6 pb-8 grid grid-cols-1 gap-4"></section>
+    <section id="music-results" class="hidden px-6 pb-8 flex flex-col gap-4">
+    </section>
 
     <section class="pl-6 pb-12 overflow-hidden">
         <div class="flex justify-between items-end pr-6 mb-6">
@@ -73,7 +76,8 @@
         </div>
         
         <div class="swiper favSwiper">
-            <div class="swiper-wrapper" id="favorites-wrapper"></div>
+            <div class="swiper-wrapper" id="favorites-wrapper">
+            </div>
         </div>
     </section>
 
@@ -98,7 +102,7 @@
                     <i data-lucide="x" class="text-white w-5 h-5"></i>
                 </button>
             </div>
-            <div id="anime-details-content" class="pb-12"></div>
+            <div id="anime-details-content"></div>
         </div>
     </div>
 
@@ -127,8 +131,16 @@
             </div>
 
             <div class="flex items-center gap-8">
-                <button onclick="sortearMoodGeek()" class="w-24 h-24 bg-white hover:bg-fuchsia-500 text-black hover:text-white rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all">
-                    <i data-lucide="skip-forward" class="w-8 h-8 fill-current"></i>
+                <button onclick="playAnterior()" class="w-14 h-14 bg-white/5 rounded-full flex items-center justify-center text-white/40 active:scale-90 transition-all">
+                    <i data-lucide="skip-back" class="w-6 h-6"></i>
+                </button>
+                
+                <button onclick="sortearMoodGeek()" class="w-24 h-24 bg-white hover:bg-fuchsia-500 text-black hover:text-white rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(124,58,237,0.3)] active:scale-90 transition-all">
+                    <i data-lucide="shuffle" class="w-8 h-8"></i>
+                </button>
+
+                <button onclick="playProxima()" class="w-14 h-14 bg-white/5 rounded-full flex items-center justify-center text-white/40 active:scale-90 transition-all">
+                    <i data-lucide="skip-forward" class="w-6 h-6"></i>
                 </button>
             </div>
         </div>
