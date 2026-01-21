@@ -12,7 +12,7 @@ const APP_STATE = {
     indiceFila: 0,
     animeCache: new Map(),
     // ATENÇÃO: Substitua pela URL gerada no seu terminal da Elgae Host
-    API_PONTE_URL: 'https://latinas-somewhat-pole-quizzes.trycloudflare.com' 
+    API_PONTE_URL: 'https://wayne-periodic-prime-televisions.trycloudflare.com' 
 };
 
 const CONFIG = {
