@@ -10,7 +10,7 @@ const APP_STATE = {
     // Ideia 1: Histórico local para sugestões
     historico: JSON.parse(localStorage.getItem('portal_geek_hist')) || [],
     animeCache: new Map(),
-    API_PONTE_URL: 'https://latinas-somewhat-pole-quizzes.trycloudflare.com' 
+    API_PONTE_URL: 'https://wayne-periodic-prime-televisions.trycloudflare.com' 
 };
 
 const CONFIG = {
