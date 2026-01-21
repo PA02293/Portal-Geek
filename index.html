@@ -22,7 +22,7 @@
             box-shadow: 0 0 20px rgba(244, 63, 94, 0.3);
         }
 
-        /* Animação suave para o menu de download */
+        /* Animação para o menu de download */
         #download-menu:not(.hidden) {
             display: flex;
             animation: slideUp 0.3s cubic-bezier(0.23, 1, 0.32, 1);
@@ -30,6 +30,21 @@
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(10px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ANIMAÇÃO DOS CORAÇÕES (Novo) */
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            width: 20px;
+            height: 20px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f43f5e"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>') no-repeat center;
+            animation: heartFly 1s ease-out forwards;
+        }
+        @keyframes heartFly {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--dir)), -150px) scale(1.5); opacity: 0; }
         }
     </style>
 </head>
@@ -44,17 +59,18 @@
                 </div>
                 <p class="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Portal <span class="text-violet-600">Geek</span></p>
             </div>
-            <div id="bridge-status" class="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2 opacity-30 transition-opacity">
+            <div id="bridge-status" class="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2 opacity-30 transition-all duration-500">
                 <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
-                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">V9.8</span>
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">ELGAE</span>
             </div>
         </div>
 
         <div class="relative group">
             <div class="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-[2.2rem] blur opacity-20 group-focus-within:opacity-40 transition-opacity"></div>
             <div class="relative flex items-center">
-                <input id="search-input" type="text" placeholder="Buscar Anime..." 
-                       class="w-full bg-[#0d0d0f] border border-white/5 rounded-[2rem] py-5 px-8 text-sm font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-all">
+                <input id="search-input" type="text" placeholder="Buscar Anime ou Música..." 
+                       class="w-full bg-[#0d0d0f] border border-white/5 rounded-[2rem] py-5 px-8 text-sm font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-all"
+                       onkeypress="if(event.key === 'Enter') realizarBusca()">
                 <button onclick="realizarBusca()" class="absolute right-2 bg-violet-600 hover:bg-violet-500 p-4 rounded-full text-white shadow-xl active:scale-90 transition-all">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </button>
@@ -86,7 +102,7 @@
         
         <div class="swiper favSwiper">
             <div class="swiper-wrapper" id="favorites-wrapper">
-            </div>
+                </div>
         </div>
     </section>
 
@@ -105,7 +121,7 @@
 
     <div id="anime-modal" class="fixed inset-0 z-[100] translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col">
         <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="fecharAnimeModal()"></div>
-        <div class="mt-20 bg-[#0c0c0e] flex-1 rounded-t-[3.5rem] border-t border-white/10 overflow-y-auto custom-scrollbar relative z-10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+        <div class="mt-20 bg-[#0c0c0e] flex-1 rounded-t-[3.5rem] border-t border-white/10 overflow-y-auto relative z-10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
             <div class="sticky top-0 right-0 p-6 flex justify-end z-20">
                 <button onclick="fecharAnimeModal()" class="w-12 h-12 bg-white/5 hover:bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center border border-white/10 active:scale-90 transition-all">
                     <i data-lucide="x" class="text-white w-5 h-5"></i>
@@ -135,8 +151,8 @@
             </div>
 
             <div class="text-center space-y-3 px-4">
-                <h2 id="player-big-title" class="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">Música Não Selecionada</h2>
-                <p id="player-author" class="text-xs font-black text-violet-400/60 uppercase tracking-[0.3em] italic">Aguardando Player...</p>
+                <h2 id="player-big-title" class="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">Portal Geek Player</h2>
+                <p id="player-author" class="text-xs font-black text-violet-400/60 uppercase tracking-[0.3em] italic">Aguardando...</p>
             </div>
 
             <div class="flex items-center gap-8 relative">
@@ -159,14 +175,14 @@
                     Baixar Mídia
                 </button>
 
-                <div id="download-menu" class="hidden absolute bottom-full mb-4 w-full bg-[#0d0d0f] border border-white/10 p-2 rounded-[2rem] shadow-2xl z-20 flex-col gap-1">
+                <div id="download-menu" class="hidden absolute bottom-full mb-4 w-full bg-[#0d0d0f] border border-white/10 p-2 rounded-[2rem] shadow-2xl z-[200] flex-col gap-1">
                     <button onclick="baixarMidia('mp3')" class="flex items-center gap-4 p-4 hover:bg-violet-600/20 rounded-2xl transition-all text-left group">
                         <div class="w-10 h-10 rounded-xl bg-violet-600/10 flex items-center justify-center group-hover:bg-violet-600 transition-colors">
                             <i data-lucide="music" class="w-4 h-4 text-violet-400 group-hover:text-white"></i>
                         </div>
                         <div>
                             <p class="text-[10px] font-black text-white uppercase">Áudio MP3</p>
-                            <p class="text-[8px] text-slate-500 font-bold uppercase">Alta Qualidade</p>
+                            <p class="text-[8px] text-slate-500 font-bold uppercase">Via Elgae Host</p>
                         </div>
                     </button>
                     <button onclick="baixarMidia('mp4')" class="flex items-center gap-4 p-4 hover:bg-fuchsia-600/20 rounded-2xl transition-all text-left group">
@@ -175,7 +191,7 @@
                         </div>
                         <div>
                             <p class="text-[10px] font-black text-white uppercase">Vídeo MP4</p>
-                            <p class="text-[8px] text-slate-500 font-bold uppercase">720p / 1080p</p>
+                            <p class="text-[8px] text-slate-500 font-bold uppercase">Processamento Remoto</p>
                         </div>
                     </button>
                 </div>
@@ -186,6 +202,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
+    
     <script src="script.js"></script>
 
 </body>
