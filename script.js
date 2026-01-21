@@ -373,3 +373,32 @@ async function checarStatusPonte() {
     } catch (e) {}
 }
 
+// --- SISTEMA DE DOWNLOAD ---
+function toggleDownloadMenu() {
+    const menu = document.getElementById('download-menu');
+    menu.classList.toggle('hidden');
+}
+
+async function baixarMidia(formato) {
+    // Pega o vídeo que está tocando no momento na fila
+    const musicaAtual = APP_STATE.filaMusica[APP_STATE.indiceFila];
+    
+    if (!musicaAtual) {
+        showToast("Nenhuma música selecionada", "error");
+        return;
+    }
+
+    const videoId = musicaAtual.id;
+    const titulo = musicaAtual.title;
+    
+    showToast(`Preparando ${formato.toUpperCase()}...`, 'info');
+    toggleDownloadMenu(); // Fecha o menu
+
+    // Redireciona para a rota de download da sua API Ponte
+    // A Ponte deve estar configurada para lidar com: /download?id=VIDEO_ID&type=mp3
+    const downloadUrl = `${APP_STATE.API_PONTE_URL}/download?id=${videoId}&type=${formato}`;
+    
+    // Abre em uma nova aba para iniciar o download sem fechar o app
+    window.open(downloadUrl, '_blank');
+}
+
