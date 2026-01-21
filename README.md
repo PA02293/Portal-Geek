@@ -34,4 +34,4 @@ O **Portal Geek** é uma interface de entretenimento definitiva, focada em busca
 
 1. **Clone o repositório:**
    ```bash
-   git clone [https://github.com/SEU_USUARIO/portal-geek.git](https://github.com/SEU_USUARIO/portal-geek.git)
+   git clone [https://github.com/PA02293/Portal-Geek.git](https://github.com/PA02293/Portal-Geek.git)
