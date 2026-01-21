@@ -5,6 +5,7 @@
     --bg-modal: #0c0c0e;
     --violet: #7c3aed;
     --fuchsia: #d946ef;
+    --rose: #f43f5e;
     --emerald: #10b981;
     --border: rgba(255, 255, 255, 0.06);
     --glass-border: rgba(255, 255, 255, 0.1);
@@ -52,10 +53,15 @@ body {
     box-shadow: 0 0 20px var(--accent-glow);
 }
 
-/* 5. ANIMAÇÕES DE LISTA (ENTRADA SUAVE) */
-#music-results > div {
-    animation: entrance 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-    opacity: 0;
+/* 5. ANIMAÇÕES DE ENTRADA E SKELETONS (Ideia 6) */
+@keyframes skeletonPulse {
+    0% { background-color: rgba(255, 255, 255, 0.03); }
+    50% { background-color: rgba(255, 255, 255, 0.08); }
+    100% { background-color: rgba(255, 255, 255, 0.03); }
+}
+
+.animate-pulse {
+    animation: skeletonPulse 1.5s ease-in-out infinite;
 }
 
 @keyframes entrance {
@@ -63,62 +69,70 @@ body {
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Delay escalonado para os itens da lista */
-#music-results > div:nth-child(1) { animation-delay: 0.1s; }
-#music-results > div:nth-child(2) { animation-delay: 0.15s; }
-#music-results > div:nth-child(3) { animation-delay: 0.2s; }
-#music-results > div:nth-child(4) { animation-delay: 0.25s; }
-
-/* 6. SWIPER COLEÇÃO PRO */
-.favSwiper {
-    overflow: visible !important;
+#music-results > div {
+    animation: entrance 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    opacity: 0;
 }
 
-.swiper-slide {
-    transition: transform 0.4s ease;
+/* 6. SISTEMA DE TOASTS (Ideia 3) */
+@keyframes bounceIn {
+    0% { opacity: 0; transform: translate(-50%, -50px); }
+    60% { opacity: 1; transform: translate(-50%, 5px); }
+    100% { transform: translate(-50%, 0); }
 }
 
-.swiper-slide img {
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-    border: 1px solid var(--border);
+.animate-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.swiper-slide:active {
-    transform: scale(0.9) rotate(-2deg);
+/* 7. CORAÇÕES FLUTUANTES (Animação de Favoritar) */
+.floating-heart {
+    position: fixed;
+    pointer-events: none;
+    z-index: 200;
+    font-size: 24px;
+    animation: heartFly 1s ease-out forwards;
 }
 
-/* 7. MODAIS (SISTEMA DE CAMADAS) */
+.floating-heart::after {
+    content: '❤️';
+}
+
+@keyframes heartFly {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: translate(var(--dir), -150px) scale(1.5) rotate(20deg); opacity: 0; }
+}
+
+/* 8. BARRA DE TAGS E GÊNEROS (Ideia 7) */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.genre-tag-active {
+    background: var(--violet);
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+}
+
+/* 9. MODAIS E PLAYER YOUTUBE */
+#youtube-player {
+    border-radius: 2.5rem;
+    overflow: hidden;
+    mask-image: -webkit-radial-gradient(white, black); /* Fix para Safari bordas */
+}
+
 #anime-modal, #player-modal {
     will-change: transform;
 }
 
-#anime-modal::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    margin-top: 12px;
-}
-
-/* Estilo para Tags de Gênero */
-.genre-tag {
-    background: var(--bg-card);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-}
-
-/* 8. SCROLLBAR PERSONALIZADA (ESTILO NEON) */
+/* 10. SCROLLBAR ESTILO NEON */
 .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -126,36 +140,7 @@ body {
     border-radius: 20px;
 }
 
-/* 9. CARDS DE AÇÃO (SORTEIO) */
-.action-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    position: relative;
-}
-
-.action-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.05), transparent);
-    transform: translateX(-100%);
-    transition: 0.6s;
-}
-
-.action-card:hover::after {
-    transform: translateX(100%);
-}
-
-/* 10. PLAYER YOUTUBE ROUNDED */
-#youtube-player {
-    border-radius: 2.5rem;
-    overflow: hidden;
-    mask-image: radial-gradient(white, black); /* Fix para bordas arredondadas em iframes */
-}
-
-/* 11. FEEDBACK VISUAL DE CONEXÃO */
+/* 11. FEEDBACK DE CONEXÃO */
 #bridge-status {
     animation: glow 3s infinite alternate;
 }
@@ -168,6 +153,8 @@ body {
 /* 12. UTILITÁRIOS */
 .hidden { display: none !important; }
 
-input:focus {
-    box-shadow: 0 0 30px rgba(124, 58, 237, 0.15);
+/* Animação para sugestões no histórico */
+.group:active img {
+    transform: scale(0.9);
 }
+
