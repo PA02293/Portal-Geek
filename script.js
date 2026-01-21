@@ -1,6 +1,6 @@
 /**
- * PORTAL GEEK - ULTIMATE v9.5
- * Full System: Fila Automática + Favoritos no Modal + Tradução Multi-Server
+ * PORTAL GEEK - ULTIMATE v9.7
+ * Fix: Tradução Híbrida (MyMemory + Multi-Libre) + Busca Estabilizada
  */
 
 const APP_STATE = {
@@ -58,11 +58,23 @@ function criarContainerToast() {
     return div;
 }
 
-// --- 3. TRADUÇÃO MULTI-SERVER (ESTÁVEL) ---
+// --- 3. TRADUÇÃO HÍBRIDA (RESILIENTE) ---
 async function traduzirTexto(texto) {
-    if (!texto) return "Sem descrição disponível.";
+    if (!texto || texto.length < 5) return "Sem descrição disponível.";
     if (APP_STATE.translationCache.has(texto)) return APP_STATE.translationCache.get(texto);
 
+    // Tentativa 1: MyMemory API (Rápida e Grátis)
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(texto.substring(0, 500))}&langpair=en|pt-BR`);
+        const data = await res.json();
+        if (data.responseData && data.responseData.translatedText) {
+            const result = data.responseData.translatedText;
+            APP_STATE.translationCache.set(texto, result);
+            return result;
+        }
+    } catch (e) { console.log("MyMemory falhou, tentando backups..."); }
+
+    // Tentativa 2: Multi-servidores LibreTranslate
     const servers = [
         "https://translate.argosopentech.com/translate",
         "https://translate.terraprint.co/translate",
@@ -83,7 +95,8 @@ async function traduzirTexto(texto) {
             }
         } catch (e) { continue; }
     }
-    return texto;
+    
+    return texto; // Retorna original se tudo falhar
 }
 
 // --- 4. FAVORITOS & ANIMAÇÕES ---
@@ -149,19 +162,24 @@ function renderFavoritos() {
     if(window.favSwiper) window.favSwiper.update();
 }
 
-// --- 5. LÓGICA DE ANIME (BUSCA & DETALHES) ---
+// --- 5. BUSCA OTIMIZADA ---
 async function realizarBusca() {
-    const q = document.getElementById('search-input').value.trim();
+    const input = document.getElementById('search-input');
+    const q = input.value.trim();
     if (!q) return;
+
     renderSkeletons();
-    
+    const list = document.getElementById('music-results');
+    list.classList.remove('hidden'); // Garante que a lista apareça
+
     if (APP_STATE.searchType === 'music') {
         try {
             const res = await fetch(`${APP_STATE.API_PONTE_URL}/search?q=${encodeURIComponent(q + ' rap geek')}`);
             const tracks = await res.json();
+            if (tracks.error) throw new Error();
             renderizarMusicas(tracks);
         } catch (e) { 
-            document.getElementById('music-results').innerHTML = `<p class="p-8 text-center text-rose-500 font-black uppercase">Ponte Offline</p>`;
+            list.innerHTML = `<p class="p-8 text-center text-rose-500 font-black uppercase text-[10px]">Ponte em Manutenção ou Offline</p>`;
         }
     } else {
         buscarAnime(q);
@@ -169,13 +187,13 @@ async function realizarBusca() {
 }
 
 async function buscarAnime(query) {
+    const list = document.getElementById('music-results');
     try {
         const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15`);
         const { data } = await res.json();
-        const list = document.getElementById('music-results');
         
         if (!data || data.length === 0) {
-            list.innerHTML = `<p class="p-8 text-center text-white/40 font-black uppercase italic">Nenhum anime encontrado</p>`;
+            list.innerHTML = `<p class="p-8 text-center text-white/40 font-black uppercase italic text-[10px]">Nenhum anime encontrado</p>`;
             return;
         }
 
@@ -197,20 +215,23 @@ async function buscarAnime(query) {
             </div>`;
         }).join('');
         lucide.createIcons();
-    } catch (e) { showToast("Erro na conexão", "error"); }
+    } catch (e) { 
+        showToast("Limite de busca atingido (Jikan API)", "error");
+    }
 }
 
 async function verDetalhesAnime(id) {
     const modal = document.getElementById('anime-modal');
     const content = document.getElementById('anime-details-content');
     modal.classList.remove('translate-y-full');
-    content.innerHTML = `<div class="p-20 flex justify-center"><div class="loader-circle"></div></div>`;
+    content.innerHTML = `<div class="p-20 flex justify-center flex-col items-center gap-4"><div class="loader-circle"></div><p class="text-[8px] font-black uppercase tracking-[0.3em] text-violet-500">Sincronizando Dados...</p></div>`;
     
     try {
-        const res = await fetch(`https://api.jikan.moe/v4/anime/${id}`);
+        const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`);
         const { data } = await res.json();
-        const sinopsePromise = traduzirTexto(data.synopsis);
         
+        // Dispara tradução em background
+        const sinopsePromise = traduzirTexto(data.synopsis);
         const isFav = APP_STATE.favoritos.some(f => f.id == data.mal_id);
         const itemJson = JSON.stringify({id: data.mal_id, title: data.title.replace(/'/g, ""), img: data.images.jpg.image_url, type: "anime"});
 
@@ -234,13 +255,13 @@ async function verDetalhesAnime(id) {
                     </div>
                     <div class="space-y-3">
                         <h3 class="text-[10px] font-black uppercase text-violet-400 tracking-widest italic">Sinopse</h3>
-                        <p id="synopsis-box" class="text-xs leading-relaxed text-slate-400 font-medium italic">Traduzindo...</p>
+                        <p id="synopsis-box" class="text-xs leading-relaxed text-slate-400 font-medium italic">Traduzindo sinopse...</p>
                     </div>
                 </div>
             </div>`;
         lucide.createIcons();
         document.getElementById('synopsis-box').innerText = await sinopsePromise;
-    } catch (e) { showToast("Erro ao carregar", "error"); }
+    } catch (e) { showToast("Erro ao carregar detalhes", "error"); }
 }
 
 async function sortearAnimeAleatorio() {
@@ -252,7 +273,7 @@ async function sortearAnimeAleatorio() {
     } catch (e) { showToast("Erro no sorteio", "error"); }
 }
 
-// --- 6. SISTEMA DE MÚSICA & FILA ---
+// --- 6. MÚSICA & FILA ---
 function renderizarMusicas(tracks) {
     APP_STATE.filaMusica = tracks;
     const list = document.getElementById('music-results');
@@ -285,7 +306,7 @@ function abrirPlayerDaFila(index) {
 }
 
 function abrirPlayerAvulso(id, title, author) {
-    APP_STATE.filaMusica = [{id, title, author}]; // Cria fila temporária
+    APP_STATE.filaMusica = [{id, title, author}];
     APP_STATE.indiceFila = 0;
     abrirPlayer(id, title, author);
 }
@@ -310,7 +331,7 @@ function playProxima() {
     if (APP_STATE.indiceFila + 1 < APP_STATE.filaMusica.length) {
         abrirPlayerDaFila(APP_STATE.indiceFila + 1);
     } else {
-        showToast("Fim da fila. Sorteando novo Mood!");
+        showToast("Fim da fila. Sorteando Mood!");
         sortearMoodGeek();
     }
 }
@@ -319,7 +340,7 @@ function playAnterior() {
     if (APP_STATE.indiceFila - 1 >= 0) abrirPlayerDaFila(APP_STATE.indiceFila - 1);
 }
 
-// --- 7. AUXILIARES & UI ---
+// --- 7. AUXILIARES ---
 function sortearMoodGeek() {
     const artista = CONFIG.ARTISTAS_GEEK[Math.floor(Math.random() * CONFIG.ARTISTAS_GEEK.length)];
     document.getElementById('search-input').value = artista;
