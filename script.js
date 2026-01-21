@@ -1,6 +1,6 @@
 /**
- * PORTAL GEEK - ULTIMATE v9.8 PLATINUM
- * Fix: Download de MP3/MP4 Estabilizado + UX Aprimorada
+ * PORTAL GEEK - ULTIMATE v10.0 ELGAE EDITION
+ * Ajustado para comunicação direta com API Elgae Host
  */
 
 const APP_STATE = {
@@ -10,8 +10,8 @@ const APP_STATE = {
     filaMusica: [],
     indiceFila: 0,
     translationCache: new Map(),
-    // URL DA SUA PONTE CLOUDFLARE
-    API_PONTE_URL: 'https://hurricane-consolidated-holding-chess.trycloudflare.com' 
+    // URL OFICIAL DA SUA HOSPEDAGEM ELGAE
+    API_PONTE_URL: 'http://elgae-sp1-b001.elgaehost.com.br:10182' 
 };
 
 const CONFIG = {
@@ -75,7 +75,7 @@ async function traduzirTexto(texto) {
     return texto;
 }
 
-// --- 4. FAVORITOS & ANIMAÇÕES ---
+// --- 4. FAVORITOS ---
 function toggleFavorito(item) {
     const index = APP_STATE.favoritos.findIndex(f => f.id == item.id);
     const element = document.querySelector(`[data-id="${item.id}"]`);
@@ -99,7 +99,6 @@ function atualizarBotaoFavoritoModal(id) {
     if (modalFavBtn) {
         const isFav = APP_STATE.favoritos.some(f => f.id == id);
         modalFavBtn.innerHTML = `<i data-lucide="heart" class="w-6 h-6 ${isFav ? 'text-rose-500 fill-rose-500' : 'text-white'}"></i>`;
-        isFav ? modalFavBtn.classList.add('is-fav') : modalFavBtn.classList.remove('is-fav');
         lucide.createIcons();
     }
 }
@@ -119,9 +118,8 @@ function showHeartAnimation(el) {
 
 function renderFavoritos() {
     const wrapper = document.getElementById('favorites-wrapper');
-    const favCount = document.getElementById('fav-count');
-    if(favCount) favCount.innerText = APP_STATE.favoritos.length;
-    
+    if (!wrapper) return;
+
     if (!APP_STATE.favoritos.length) {
         wrapper.innerHTML = `<div class="swiper-slide !w-40"><div class="aspect-[3/4.5] flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-[2rem] text-white/10 italic text-[8px] font-black uppercase">Vazio</div></div>`;
     } else {
@@ -153,10 +151,11 @@ async function realizarBusca() {
     if (APP_STATE.searchType === 'music') {
         try {
             const res = await fetch(`${APP_STATE.API_PONTE_URL}/search?q=${encodeURIComponent(q + ' rap geek')}`);
+            if(!res.ok) throw new Error("Servidor Offline");
             const tracks = await res.json();
             renderizarMusicas(tracks);
         } catch (e) { 
-            list.innerHTML = `<p class="p-8 text-center text-rose-500 font-black uppercase text-[10px]">Ponte em Manutenção</p>`;
+            list.innerHTML = `<p class="p-8 text-center text-rose-500 font-black uppercase text-[10px]">API Elgae Host Offline</p>`;
         }
     } else {
         buscarAnime(q);
@@ -186,7 +185,7 @@ async function buscarAnime(query) {
             </div>`;
         }).join('');
         lucide.createIcons();
-    } catch (e) { showToast("Erro na busca", "error"); }
+    } catch (e) { showToast("Erro na busca de Anime", "error"); }
 }
 
 async function verDetalhesAnime(id) {
@@ -208,7 +207,7 @@ async function verDetalhesAnime(id) {
                 <div class="relative h-[45vh] rounded-[3rem] overflow-hidden border border-white/10">
                     <img src="${data.images.jpg.large_image_url}" class="w-full h-full object-cover">
                     <button id="modal-fav-btn" onclick='toggleFavorito(${itemJson})' 
-                            class="absolute bottom-6 right-6 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center ${isFav ? 'is-fav' : ''}">
+                            class="absolute bottom-6 right-6 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center">
                         <i data-lucide="heart" class="w-6 h-6 ${isFav ? 'text-rose-500 fill-rose-500' : 'text-white'}"></i>
                     </button>
                 </div>
@@ -219,7 +218,7 @@ async function verDetalhesAnime(id) {
             </div>`;
         lucide.createIcons();
         document.getElementById('synopsis-box').innerText = await sinopsePromise;
-    } catch (e) { showToast("Erro ao carregar", "error"); }
+    } catch (e) { showToast("Erro ao carregar detalhes", "error"); }
 }
 
 // --- 6. MÚSICA & PLAYER ---
@@ -286,7 +285,7 @@ function playAnterior() {
     if (APP_STATE.indiceFila - 1 >= 0) abrirPlayerDaFila(APP_STATE.indiceFila - 1);
 }
 
-// --- 7. SISTEMA DE DOWNLOAD (CORRIGIDO) ---
+// --- 7. SISTEMA DE DOWNLOAD ELGAE (FIX) ---
 function toggleDownloadMenu() {
     const menu = document.getElementById('download-menu');
     menu.classList.toggle('hidden');
@@ -296,26 +295,35 @@ async function baixarMidia(formato) {
     const musicaAtual = APP_STATE.filaMusica[APP_STATE.indiceFila];
     
     if (!musicaAtual) {
-        showToast("Nenhuma música no player", "error");
+        showToast("Nenhuma música ativa", "error");
         return;
     }
 
-    showToast(`Baixando ${formato.toUpperCase()}...`, 'info');
+    showToast(`Iniciando Download via Elgae Host...`, 'info');
     toggleDownloadMenu(); 
 
-    // O Redirect direto é melhor para mobile não bloquear como popup
+    // URL Direta da API Elgae Host
     const downloadUrl = `${APP_STATE.API_PONTE_URL}/download?id=${musicaAtual.id}&type=${formato}`;
     
-    // Dispara o download
-    window.location.href = downloadUrl;
+    // Método de download resiliente (âncora oculta)
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', ''); // O servidor cuida do nome do arquivo
+    link.setAttribute('target', '_blank');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // --- AUXILIARES ---
 function sortearMoodGeek() {
     const artista = CONFIG.ARTISTAS_GEEK[Math.floor(Math.random() * CONFIG.ARTISTAS_GEEK.length)];
-    document.getElementById('search-input').value = artista;
-    setSearchType('music');
-    realizarBusca();
+    const input = document.getElementById('search-input');
+    if(input) {
+        input.value = artista;
+        setSearchType('music');
+        realizarBusca();
+    }
 }
 
 function fecharAnimeModal() { document.getElementById('anime-modal').classList.add('translate-y-full'); }
@@ -327,7 +335,8 @@ function fecharPlayer() {
 function setSearchType(type) {
     APP_STATE.searchType = type;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'bg-violet-600', 'text-white'));
-    document.getElementById(`type-${type}`).classList.add('active', 'bg-violet-600', 'text-white');
+    const btn = document.getElementById(`type-${type}`);
+    if(btn) btn.classList.add('active', 'bg-violet-600', 'text-white');
 }
 
 function renderSkeletons() {
@@ -337,8 +346,11 @@ function renderSkeletons() {
 async function checarStatusPonte() {
     try {
         const res = await fetch(`${APP_STATE.API_PONTE_URL}/status`);
-        if (res.ok) document.getElementById('bridge-status').classList.remove('opacity-30');
-    } catch (e) {}
+        const statusIcon = document.getElementById('bridge-status');
+        if (res.ok && statusIcon) statusIcon.classList.remove('opacity-30');
+    } catch (e) {
+        console.warn("API Elgae está offline.");
+    }
 }
 
 async function sortearAnimeAleatorio() {
@@ -348,4 +360,3 @@ async function sortearAnimeAleatorio() {
         verDetalhesAnime(data.mal_id);
     } catch (e) {}
 }
-
