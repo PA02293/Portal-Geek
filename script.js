@@ -10,7 +10,7 @@ const APP_STATE = {
     filaMusica: [],
     indiceFila: 0,
     translationCache: new Map(),
-    API_PONTE_URL: 'https://wayne-periodic-prime-televisions.trycloudflare.com' 
+    API_PONTE_URL: 'https://hurricane-consolidated-holding-chess.trycloudflare.com' 
 };
 
 const CONFIG = {
