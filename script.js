@@ -9,7 +9,7 @@ const APP_STATE = {
     favoritos: JSON.parse(localStorage.getItem('portal_geek_favs')) || [],
     animeCache: new Map(),
     // IMPORTANTE: O server.js enviará o IP correto para sua DM. Substitua abaixo.
-    API_PONTE_URL: 'http://31.57.60.2:3000' 
+    API_PONTE_URL: 'https://wayne-periodic-prime-televisions.trycloudflare.com' 
 };
 
 const CONFIG = {
