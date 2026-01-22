@@ -28,10 +28,10 @@ body {
     color: #f8fafc;
     overflow-x: hidden;
     line-height: 1.5;
-    overscroll-behavior: contain; /* Evita o "puxar para atualizar" no mobile */
+    overscroll-behavior: contain;
 }
 
-/* 3. FUNDO AMBIENTE DINÂMICO OTIMIZADO */
+/* 3. FUNDO AMBIENTE DINÂMICO */
 .bg-main {
     min-height: 100vh;
     background: 
@@ -41,11 +41,11 @@ body {
     background-attachment: fixed;
 }
 
-/* 4. ABAS (TABS) - ANIMAÇÃO FLUIDA */
+/* 4. ABAS (TABS) - AJUSTE DE CONTRASTE */
 .tab-btn {
     position: relative;
     color: rgba(255, 255, 255, 0.3);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tab-btn.active {
@@ -55,11 +55,10 @@ body {
     transform: translateY(-1px);
 }
 
-/* 5. ANIMAÇÃO DE ENTRADA (STAGGER) */
+/* 5. ANIMAÇÃO DE ENTRADA (Cards da Busca) */
 #music-results > div {
     animation: entrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     opacity: 0;
-    will-change: transform, opacity;
 }
 
 @keyframes entrance {
@@ -67,42 +66,32 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 6. SKELETON LOADING (NOVO) */
+/* 6. SKELETON LOADING (Efeito Shimmer) */
 .animate-pulse {
-    animation: pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    background: linear-gradient(90deg, #ffffff05 25%, #ffffff0a 50%, #ffffff05 75%);
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(90deg, #ffffff05 0%, #ffffff0f 50%, #ffffff05 100%);
     background-size: 200% 100%;
 }
 
-@keyframes pulse {
+@keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
 
-/* 7. PLAYER YOUTUBE & MODAIS */
-#youtube-player {
-    border-radius: 1.5rem;
-    overflow: hidden;
-    transform: translateZ(0); /* Força aceleração de hardware */
-}
-
+/* 7. MODAIS (Transição Suave) */
 #player-modal, #anime-modal {
     transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
 }
 
-/* 8. CONTAINER DE SINOPSE TRADUZIDA (ANIME) */
-.synopsis-text {
-    font-size: 13px;
-    line-height: 1.7;
-    color: rgba(255,255,255,0.7);
-    text-align: justify;
-    padding: 1rem;
-    background: rgba(255,255,255,0.02);
+/* Player específico */
+#youtube-player {
+    width: 100%;
+    height: 100%;
     border-radius: 1.5rem;
-    border: 1px solid var(--border);
 }
 
-/* 9. SWIPER FAVORITOS */
+/* 8. SWIPER FAVORITOS (Coleção) */
 .favSwiper {
     overflow: visible !important;
     padding-right: 24px;
@@ -110,16 +99,25 @@ body {
 
 .swiper-slide {
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
 }
 
-.swiper-slide:active {
-    transform: scale(0.92);
+/* Overlay de remover favoritos no carrossel */
+.swiper-slide button {
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.3s ease;
 }
 
-/* 10. STATUS DA PONTE (NEON PULSE) */
+.swiper-slide:hover button {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* 9. CORES DE STATUS (Bridge/Tunnelmole) */
 .text-emerald-500 {
     color: var(--emerald) !important;
-    filter: drop-shadow(0 0 5px var(--emerald));
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
 }
 
 #bridge-status.text-emerald-500 {
@@ -128,11 +126,13 @@ body {
     background: rgba(16, 185, 129, 0.05);
 }
 
-/* 11. SCROLLBAR PERSONALIZADA */
+/* 10. SCROLLBARS (App Feel) */
 ::-webkit-scrollbar {
-    width: 0px; /* Esconde no mobile para parecer app nativo */
+    width: 0px;
+    background: transparent;
 }
 
+/* Scrollbar interna do modal de anime */
 .custom-scrollbar::-webkit-scrollbar {
     width: 3px;
 }
@@ -142,26 +142,33 @@ body {
     border-radius: 10px;
 }
 
+/* 11. ICONES E BOTÕES ESPECIAIS */
+.fill-rose-500 {
+    fill: var(--rose);
+    color: var(--rose) !important;
+    filter: drop-shadow(0 0 5px var(--rose));
+}
+
+/* Estilo para as imagens dos favoritos (Coleção) */
+#favorites-wrapper img {
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Toast Container Position */
+#toast-container {
+    padding-top: env(safe-area-inset-top);
+}
+
 /* 12. UTILS */
 .hidden { display: none !important; }
 
-/* Loader Central */
-.loader-wrapper {
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
+/* Efeito de Clique Mobile */
+.active\:scale-95:active {
+    transform: scale(0.95);
 }
 
-.loader-circle {
-    width: 30px;
-    height: 30px;
-    border: 2px solid rgba(124, 58, 237, 0.1);
-    border-top: 2px solid var(--violet);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.active\:scale-75:active {
+    transform: scale(0.75);
 }
 
