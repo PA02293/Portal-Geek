@@ -5,17 +5,10 @@
   --bg-dark: #070708;
   --bg-card: rgba(255, 255, 255, 0.035);
   --bg-modal: #0c0c0e;
-
   --violet: #7c3aed;
   --fuchsia: #d946ef;
-  --emerald: #10b981;
-  --rose: #f43f5e;
-
-  --border: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.15);
-
   --accent-glow: rgba(124, 58, 237, 0.4);
-  --radius-xl: 2.2rem;
+  --border: rgba(255, 255, 255, 0.08);
 }
 
 /* =====================================================
@@ -33,12 +26,11 @@ body {
   background: var(--bg-dark);
   color: #f8fafc;
   overflow-x: hidden;
-  line-height: 1.5;
-  overscroll-behavior: contain;
+  overscroll-behavior: none;
 }
 
 /* =====================================================
-   3. CARDS DE RESULTADOS (Gerados pelo JS)
+   3. RESULTADOS & PLAYLIST
 ===================================================== */
 .track-card {
   display: flex;
@@ -50,147 +42,145 @@ body {
   border-radius: 1.5rem;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: 0;
   animation: entrance 0.5s forwards;
 }
 
 .track-card:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--violet);
-  transform: translateX(5px);
+  transform: scale(1.02);
 }
 
 .track-card img {
-  width: 56px;
-  height: 56px;
-  border-radius: 1rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
   object-fit: cover;
 }
 
-.track-card strong {
-  display: block;
-  font-size: 0.9rem;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
+.track-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
 }
 
-.track-card small {
-  color: #94a3b8;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.track-actions button {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  width: 35px;
+  height: 35px;
+  border-radius: 10px;
+  color: white;
+  transition: 0.2s;
 }
 
-/* =====================================================
-   4. FAVORITOS (SWIPER)
-===================================================== */
+.track-actions button:hover { background: var(--violet); }
+
+/* Playlist Horizontal (Minha Coleção) */
+#favorites-wrapper {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scrollbar-width: none; /* Firefox */
+}
+
+#favorites-wrapper::-webkit-scrollbar { display: none; }
+
 .fav-card {
+  flex: 0 0 120px;
   position: relative;
-  width: 140px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: transform 0.3s;
+  transition: 0.3s;
 }
-
-.fav-card:active { transform: scale(0.95); }
 
 .fav-card img {
-  width: 140px;
-  height: 180px;
-  border-radius: 1.5rem;
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
   object-fit: cover;
   border: 1px solid var(--border);
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 .fav-card span {
-  display: block;
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
+  display: block;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Botão de excluir favorito */
 .fav-card button {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  top: 5px; right: 5px;
+  background: rgba(0,0,0,0.7);
   color: white;
-  width: 28px;
-  height: 28px;
   border-radius: 50%;
-  backdrop-filter: blur(4px);
-  font-weight: bold;
+  width: 24px; height: 24px;
+  font-size: 10px;
 }
 
 /* =====================================================
-   5. TABS & BOTÕES
-===================================================== */
-.tab-btn {
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: 800;
-  transition: all 0.3s;
-}
-
-.tab-btn.active {
-  background: linear-gradient(135deg, var(--violet), var(--fuchsia)) !important;
-  color: #fff !important;
-  box-shadow: 0 10px 25px -5px var(--accent-glow);
-}
-
-.btn-download {
-  flex: 1;
-  padding: 1.2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border);
-  border-radius: 1.5rem;
-  color: white;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  transition: all 0.3s;
-}
-
-.btn-download:hover {
-  background: var(--violet);
-  box-shadow: 0 0 20px var(--accent-glow);
-  transform: translateY(-2px);
-}
-
-/* =====================================================
-   6. PLAYER & MODAL
+   4. PLAYER MODAL & CONTROLES
 ===================================================== */
 #player-modal {
+  position: fixed;
+  inset: 0;
   background: var(--bg-dark);
-  z-index: 200;
+  z-index: 500;
+  transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-#player-modal:not(.hidden) {
-  transform: translateY(0);
+.player-container {
+  position: relative;
+  width: 100%;
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+/* O "Escudo" que bloqueia cliques no player do YouTube */
+.player-blocker {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: transparent;
 }
 
 #youtube-player {
   width: 100%;
   height: 100%;
-  pointer-events: auto;
 }
 
-/* Esqueleto de Carregamento */
+/* Botões de Controle do Player */
+#btn-pause {
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
+}
+
+#btn-pause:active { transform: scale(0.9); }
+
+/* =====================================================
+   5. COMPONENTES E ANIMAÇÕES
+===================================================== */
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--violet), var(--fuchsia)) !important;
+  color: #fff !important;
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.btn-download {
+  transition: 0.3s;
+  backdrop-filter: blur(10px);
+}
+
 .skeleton {
   width: 100%;
-  height: 80px;
+  height: 70px;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 1.5rem;
+  border-radius: 1.2rem;
   position: relative;
   overflow: hidden;
 }
@@ -198,16 +188,13 @@ body {
 .skeleton::after {
   content: "";
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  inset: 0;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
   animation: shimmer 1.5s infinite;
 }
 
-/* =====================================================
-   7. ANIMAÇÕES
-===================================================== */
 @keyframes entrance {
-  from { opacity: 0; transform: translateY(15px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -217,17 +204,13 @@ body {
 }
 
 /* =====================================================
-   8. UTILS & RESPONSIVIDADE
+   6. RESPONSIVIDADE
 ===================================================== */
-.hidden { display: none !important; }
-
 @media (min-width: 1024px) {
   #music-results {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
   }
-  
-  .track-card strong { max-width: 100%; }
 }
 
