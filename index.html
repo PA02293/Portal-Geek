@@ -2,89 +2,73 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-  >
-  <title>Portal Geek | Ultimate Experience</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Portal Geek | Ultimate Experience v17</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
   <link rel="stylesheet" href="style.css">
 
   <style>
-    body {
-      background-color: #070708;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .bg-main {
-      background: radial-gradient(circle at top right, #1e1b4b, #070708 60%);
-      min-height: 100vh;
-    }
-    /* Esconde a scrollbar mas mantém o scroll funcional */
+    body { background-color: #070708; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .bg-main { background: radial-gradient(circle at top right, #1e1b4b, #070708 60%); min-height: 100vh; }
     ::-webkit-scrollbar { width: 0; background: transparent; }
     
-    .tab-btn.active {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
+    .tab-btn.active { background: rgba(255, 255, 255, 0.1); color: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    
     .btn-download {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px border rgba(255, 255, 255, 0.1);
-      padding: 12px 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 12px 20px;
       border-radius: 1rem;
       font-weight: 900;
-      font-size: 12px;
+      font-size: 10px;
       letter-spacing: 0.1em;
       transition: all 0.3s;
     }
-    .btn-download:hover { background: #7c3aed; }
+    .btn-download:hover { background: #7c3aed; border-color: transparent; }
+
+    /* Overlay para bloquear clique no vídeo */
+    .player-container { position: relative; }
+    .player-blocker { 
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+      z-index: 10; background: transparent; cursor: default;
+    }
+
+    /* Modal Animation Fix */
+    #player-modal:not(.hidden) { transform: translateY(0); }
+    #player-modal.hidden { transform: translateY(100%); display: flex; }
   </style>
 </head>
 
 <body class="bg-main text-slate-200 antialiased overflow-x-hidden">
 
 <div class="mx-auto max-w-screen-xl">
-
   <header class="px-6 pt-8 pb-6 space-y-6 lg:pt-14 lg:pb-10">
-
     <div class="flex justify-between items-start">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span id="bridge-status-dot" class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
           <h1 class="text-[10px] font-black text-fuchsia-500 uppercase tracking-[0.4em] italic">
-            V15.0 Ultimate Engine
+            V17.0 Notify Engine
           </h1>
         </div>
-
         <p class="text-3xl lg:text-5xl font-black text-white italic uppercase tracking-tighter leading-none">
           Portal <span class="text-violet-600">Geek</span>
         </p>
       </div>
-
-      <div id="bridge-status" class="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2 transition-all">
+      <div class="px-4 py-2 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-2">
         <i data-lucide="zap" class="w-4 h-4 text-yellow-400"></i>
-        <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">
-          Tunnelmole Ativo
-        </span>
+        <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">DASHBOARD ATIVA</span>
       </div>
     </div>
 
     <div class="relative group max-w-2xl mx-auto">
-      <div class="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-[2.2rem] blur opacity-20 group-focus-within:opacity-40 transition-all"></div>
+      <div class="absolute -inset-1 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-[2.2rem] blur opacity-20 transition-all"></div>
       <div class="relative flex items-center">
-        <input
-          id="search-input"
-          type="text"
-          placeholder="Buscar Artista ou Música..."
-          onkeypress="if(event.key === 'Enter') buscar()"
-          class="w-full bg-[#0d0d0f] border border-white/5 rounded-[2rem] py-5 px-8 text-sm font-bold text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-all"
-        >
+        <input id="search-input" type="text" placeholder="Buscar Artista ou Música..." onkeypress="if(event.key === 'Enter') buscar()"
+          class="w-full bg-[#0d0d0f] border border-white/5 rounded-[2rem] py-5 px-8 text-sm font-bold text-white focus:outline-none focus:border-violet-500/50 transition-all">
         <button onclick="buscar()" class="absolute right-2 bg-violet-600 hover:bg-violet-500 p-4 rounded-full text-white shadow-xl active:scale-90 transition-all">
           <i data-lucide="search" class="w-5 h-5"></i>
         </button>
@@ -92,12 +76,8 @@
     </div>
 
     <div class="flex bg-white/5 p-1.5 rounded-[1.8rem] border border-white/5 max-w-md mx-auto">
-      <button id="type-music" onclick="setSearchType('music')" class="tab-btn active flex-1 py-3.5 rounded-[1.4rem] text-[10px] font-black uppercase tracking-[0.2em]">
-        MÚSICAS
-      </button>
-      <button id="type-anime" onclick="setSearchType('anime')" class="tab-btn flex-1 py-3.5 rounded-[1.4rem] text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
-        ANIMES
-      </button>
+      <button id="type-music" onclick="setSearchType('music')" class="tab-btn active flex-1 py-3.5 rounded-[1.4rem] text-[10px] font-black uppercase tracking-[0.2em]">MÚSICAS</button>
+      <button id="type-anime" onclick="setSearchType('anime')" class="tab-btn flex-1 py-3.5 rounded-[1.4rem] text-[10px] font-black uppercase tracking-[0.2em] text-white/40">ANIMES</button>
     </div>
   </header>
 
@@ -106,70 +86,76 @@
   <section class="pl-6 pr-6 pb-12 overflow-hidden">
     <div class="flex justify-between items-end mb-6">
       <div>
-        <h3 class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mb-1">Local Storage</h3>
-        <div class="flex items-center gap-3">
-          <p class="text-xl font-black text-white italic uppercase tracking-tighter">
-            Minha <span class="text-fuchsia-500">Coleção</span>
-          </p>
-          <span id="fav-count" class="bg-white/10 text-white/60 px-2 py-0.5 rounded-md text-[9px] font-black">0</span>
-        </div>
+        <h3 class="text-[9px] font-black text-slate-500 uppercase tracking-[0.4em] mb-1">Playlist Local</h3>
+        <p class="text-xl font-black text-white italic uppercase tracking-tighter">Minha <span class="text-fuchsia-500">Coleção</span></p>
       </div>
     </div>
-    <div class="swiper favSwiper">
-      <div class="swiper-wrapper" id="favorites-wrapper"></div>
-    </div>
+    <div class="flex gap-4 overflow-x-auto pb-4" id="favorites-wrapper">
+      </div>
   </section>
 
   <section class="px-6 grid grid-cols-2 md:grid-cols-4 gap-4 pb-28 max-w-3xl mx-auto">
-    <div onclick="alert('Funcionalidade de sorteio em breve!')" class="group p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col items-center gap-3 cursor-pointer active:scale-95 transition-all hover:bg-white/[0.05]">
+    <div onclick="sortearAnime()" class="group p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col items-center gap-3 cursor-pointer active:scale-95 transition-all hover:bg-white/[0.05]">
       <i data-lucide="shuffle" class="w-6 h-6 text-fuchsia-500"></i>
-      <p class="text-[9px] font-black uppercase italic tracking-widest">Random Anime</p>
+      <p class="text-[9px] font-black uppercase italic tracking-widest">Sorteio Anime</p>
     </div>
-    <div onclick="alert('Modo Geek ativado no servidor!')" class="group p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col items-center gap-3 cursor-pointer active:scale-95 transition-all hover:bg-white/[0.05]">
+    <div onclick="moodGeek('hype')" class="group p-6 rounded-[2.5rem] bg-white/[0.03] border border-white/5 flex flex-col items-center gap-3 cursor-pointer active:scale-95 transition-all hover:bg-white/[0.05]">
       <i data-lucide="zap" class="w-6 h-6 text-violet-500"></i>
-      <p class="text-[9px] font-black uppercase italic tracking-widest">Mood Geek</p>
+      <p class="text-[9px] font-black uppercase italic tracking-widest">Hype Mode</p>
     </div>
   </section>
-
 </div>
 
-<div id="player-modal" class="fixed inset-0 z-[150] translate-y-full transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] flex flex-col bg-[#070708] hidden">
+<div id="player-modal" class="fixed inset-0 z-[150] transition-all duration-500 flex flex-col bg-[#070708] hidden">
   <div class="p-8 flex items-center justify-between">
     <button onclick="fecharModalPlayer()" class="w-14 h-14 bg-white/5 rounded-[1.5rem] flex items-center justify-center border border-white/10 active:scale-90">
       <i data-lucide="chevron-down" class="w-6 h-6 text-white"></i>
     </button>
-    <p class="text-[10px] font-black text-fuchsia-500 uppercase tracking-[0.5em]">Ouvindo Agora</p>
-    <div class="w-14"></div>
+    <p class="text-[10px] font-black text-fuchsia-500 uppercase tracking-[0.5em]">Now Playing</p>
+    <button onclick="adicionarAFilaAtual()" class="w-14 h-14 bg-white/5 rounded-[1.5rem] flex items-center justify-center border border-white/10 active:scale-90">
+      <i data-lucide="heart" class="w-6 h-6 text-white"></i>
+    </button>
   </div>
 
-  <div class="flex-1 flex flex-col items-center justify-center p-8 gap-10">
-    <div class="w-full max-w-3xl aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 bg-black">
-      <div id="youtube-player"></div>
+  <div class="flex-1 flex flex-col items-center justify-center p-8 gap-8">
+    <div class="player-container w-full max-w-3xl aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 bg-black shadow-2xl">
+      <div class="player-blocker"></div>
+      <div id="youtube-player" class="w-full h-full"></div>
     </div>
 
     <div class="text-center space-y-2">
-      <h2 id="player-title" class="text-2xl font-black italic uppercase tracking-tighter text-white">
-        Portal Geek Player
-      </h2>
-      <p id="player-author" class="text-[10px] font-black text-violet-400 uppercase tracking-widest italic">
-        Selecione uma faixa
-      </p>
+      <h2 id="player-title" class="text-2xl font-black italic uppercase tracking-tighter text-white">Portal Geek Player</h2>
+      <p id="player-author" class="text-[10px] font-black text-violet-400 uppercase tracking-widest italic">V17.0 Engine</p>
+    </div>
+
+    <div class="flex items-center gap-8">
+      <button onclick="anterior()" class="p-4 bg-white/5 rounded-full hover:bg-white/10"><i data-lucide="skip-back" class="text-white"></i></button>
+      <button id="btn-pause" onclick="togglePlay()" class="w-20 h-20 bg-violet-600 rounded-full flex items-center justify-center shadow-lg shadow-violet-600/20 active:scale-90 transition-all">
+        <i data-lucide="pause" class="w-8 h-8 text-white"></i>
+      </button>
+      <button onclick="proxima()" class="p-4 bg-white/5 rounded-full hover:bg-white/10"><i data-lucide="skip-forward" class="text-white"></i></button>
     </div>
 
     <div class="flex gap-4">
-      <button onclick="baixar('mp3')" class="btn-download text-white">BAIXAR MP3</button>
-      <button onclick="baixar('mp4')" class="btn-download text-white">BAIXAR MP4</button>
+      <button onclick="baixar('mp3')" class="btn-download text-white flex items-center gap-2">
+        <i data-lucide="music" class="w-4 h-4"></i> MP3
+      </button>
+      <button onclick="baixar('mp4')" class="btn-download text-white flex items-center gap-2">
+        <i data-lucide="video" class="w-4 h-4"></i> MP4
+      </button>
     </div>
   </div>
 </div>
 
 <script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="script.js"></script>
 <script>
-  // Inicializa os ícones Lucide
   lucide.createIcons();
+  function adicionarAFilaAtual() {
+      const t = APP_STATE.fila[APP_STATE.filaIndex];
+      if(t) adicionarAFila(t.id, t.title, t.author, t.thumb);
+  }
 </script>
 
 </body>
