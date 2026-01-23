@@ -14,7 +14,7 @@ const APP_STATE = {
     indiceFila: 0,
     translationCache: new Map(),
     // [IMPORTANTE] Atualize sua URL do Tunnelmole aqui:
-    API_URL: 'https://chirj5-ip-31-57-60-2.tunnelmole.net', 
+    API_URL: 'https://kjdrex-ip-31-57-60-2.tunnelmole.net', 
     isSearching: false
 };
 
