@@ -3,7 +3,7 @@
 ===================================================== */
 :root {
   --bg-dark: #070708;
-  --bg-card: rgba(255, 255, 255, 0.025);
+  --bg-card: rgba(255, 255, 255, 0.035);
   --bg-modal: #0c0c0e;
 
   --violet: #7c3aed;
@@ -11,11 +11,11 @@
   --emerald: #10b981;
   --rose: #f43f5e;
 
-  --border: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.15);
 
-  --accent-glow: rgba(124, 58, 237, 0.35);
-  --radius-xl: 2.5rem;
+  --accent-glow: rgba(124, 58, 237, 0.4);
+  --radius-xl: 2.2rem;
 }
 
 /* =====================================================
@@ -26,7 +26,6 @@
   padding: 0;
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
 }
 
 body {
@@ -39,221 +38,196 @@ body {
 }
 
 /* =====================================================
-   3. FUNDO AMBIENTE
+   3. CARDS DE RESULTADOS (Gerados pelo JS)
 ===================================================== */
-.bg-main {
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 20% -10%, rgba(124,58,237,.15), transparent 40%),
-    radial-gradient(circle at 80% 110%, rgba(217,70,239,.12), transparent 45%),
-    #070708;
+.track-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  animation: entrance 0.5s forwards;
+}
+
+.track-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--violet);
+  transform: translateX(5px);
+}
+
+.track-card img {
+  width: 56px;
+  height: 56px;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.track-card strong {
+  display: block;
+  font-size: 0.9rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.track-card small {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* =====================================================
-   4. TABS
+   4. FAVORITOS (SWIPER)
+===================================================== */
+.fav-card {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.fav-card:active { transform: scale(0.95); }
+
+.fav-card img {
+  width: 140px;
+  height: 180px;
+  border-radius: 1.5rem;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  margin-bottom: 0.5rem;
+}
+
+.fav-card span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Botão de excluir favorito */
+.fav-card button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  font-weight: bold;
+}
+
+/* =====================================================
+   5. TABS & BOTÕES
 ===================================================== */
 .tab-btn {
-  color: rgba(255,255,255,.35);
-  transition: all .35s cubic-bezier(.4,0,.2,1);
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 800;
+  transition: all 0.3s;
 }
 
 .tab-btn.active {
-  background: linear-gradient(135deg, var(--violet), var(--fuchsia));
-  color: #fff;
-  box-shadow: 0 12px 30px -10px var(--accent-glow);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--violet), var(--fuchsia)) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 25px -5px var(--accent-glow);
+}
+
+.btn-download {
+  flex: 1;
+  padding: 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  color: white;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  transition: all 0.3s;
+}
+
+.btn-download:hover {
+  background: var(--violet);
+  box-shadow: 0 0 20px var(--accent-glow);
+  transform: translateY(-2px);
 }
 
 /* =====================================================
-   5. RESULTADOS — ENTRADA SUAVE
+   6. PLAYER & MODAL
 ===================================================== */
-#music-results > div {
-  opacity: 0;
-  animation: entrance .45s cubic-bezier(.2,.8,.2,1) forwards;
+#player-modal {
+  background: var(--bg-dark);
+  z-index: 200;
 }
 
-@keyframes entrance {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+#player-modal:not(.hidden) {
+  transform: translateY(0);
 }
 
-/* =====================================================
-   6. LOADING SHIMMER
-===================================================== */
-.animate-pulse {
-  animation: shimmer 1.8s infinite linear;
-  background: linear-gradient(
-    90deg,
-    #ffffff05,
-    #ffffff12,
-    #ffffff05
-  );
-  background-size: 200% 100%;
-}
-
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to   { background-position: -200% 0; }
-}
-
-/* =====================================================
-   7. MODAIS
-===================================================== */
-#player-modal,
-#anime-modal {
-  will-change: transform;
-  transition: transform .6s cubic-bezier(.32,.72,0,1);
-}
-
-/* Player YouTube */
 #youtube-player {
   width: 100%;
   height: 100%;
+  pointer-events: auto;
+}
+
+/* Esqueleto de Carregamento */
+.skeleton {
+  width: 100%;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 1.5rem;
+  position: relative;
   overflow: hidden;
 }
 
-/* =====================================================
-   8. SWIPER — COLEÇÃO
-===================================================== */
-.favSwiper {
-  overflow: visible !important;
-  padding-bottom: 10px;
-}
-
-.swiper-slide {
-  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-}
-
-/* Botão remover favorito */
-.swiper-slide button {
-  opacity: 0;
-  transform: scale(.6);
-  transition: all .25s ease;
-}
-
-@media (hover: hover) {
-  .swiper-slide:hover button {
-    opacity: 1;
-    transform: scale(1);
-  }
+.skeleton::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  animation: shimmer 1.5s infinite;
 }
 
 /* =====================================================
-   9. STATUS — TUNNELMOLE
+   7. ANIMAÇÕES
 ===================================================== */
-.text-emerald-500 {
-  color: var(--emerald) !important;
-  filter: drop-shadow(0 0 6px rgba(16,185,129,.45));
+@keyframes entrance {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-#bridge-status.text-emerald-500 {
-  opacity: 1 !important;
-  border-color: var(--emerald);
-  background: rgba(16,185,129,.06);
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 /* =====================================================
-   10. SCROLLBARS
+   8. UTILS & RESPONSIVIDADE
 ===================================================== */
-::-webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
+.hidden { display: none !important; }
 
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--violet);
-  border-radius: 10px;
-}
-
-/* =====================================================
-   11. ÍCONES / IMAGENS
-===================================================== */
-.fill-rose-500 {
-  fill: var(--rose);
-  color: var(--rose);
-  filter: drop-shadow(0 0 6px var(--rose));
-}
-
-#favorites-wrapper img {
-  mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
-}
-
-/* =====================================================
-   12. BOTÕES DOWNLOAD (PLAYER)
-===================================================== */
-.btn-download {
-  flex: 1;
-  padding: 1rem;
-  border-radius: 1.5rem;
-  background: rgba(255,255,255,.05);
-  border: 1px solid var(--border);
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  transition: all .25s ease;
-}
-
-@media (hover: hover) {
-  .btn-download:hover {
-    background: rgba(255,255,255,.12);
-    transform: translateY(-2px);
-  }
-}
-
-/* =====================================================
-   13. UTILS
-===================================================== */
-.hidden {
-  display: none !important;
-}
-
-.active\:scale-95:active {
-  transform: scale(.95);
-}
-
-/* =====================================================
-   14. DESKTOP — UPGRADE VISUAL
-===================================================== */
 @media (min-width: 1024px) {
-
-  body {
-    font-size: 16px;
+  #music-results {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
   }
-
-  /* Cards mais elegantes */
-  #music-results > div {
-    border-radius: var(--radius-xl);
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border);
-  }
-
-  /* Player desktop */
-  #player-modal {
-    padding-top: 40px;
-  }
-
-  #player-modal .aspect-video {
-    box-shadow:
-      0 30px 80px rgba(0,0,0,.6),
-      0 0 0 1px var(--border);
-  }
-
-  /* Swiper mais espaçado */
-  .favSwiper {
-    padding-bottom: 30px;
-  }
+  
+  .track-card strong { max-width: 100%; }
 }
+
