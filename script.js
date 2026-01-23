@@ -20,7 +20,7 @@ const APP_STATE = {
     translationCache: new Map(),
 
     // 🔗 LINK MANUAL: Atualize aqui quando o Tunnelmole mudar
-    API_URL: 'https://tfaj1y-ip-31-57-60-2.tunnelmole.net',
+    API_URL: 'https://c36mkp-ip-31-57-60-2.tunnelmole.net',
 
     isSearching: false,
     isDesktop: window.matchMedia('(min-width: 1024px)').matches
