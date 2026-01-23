@@ -1,11 +1,8 @@
 /**
  * ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
- * ┃  PORTAL GEEK - ULTIMATE ENGINE v14.0  ┃
+ * ┃  PORTAL GEEK - ULTIMATE ENGINE v15.0  ┃
  * ┃  PC + MOBILE COMPATIBILITY CORE      ┃
  * ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
- * Mobile-first ✔
- * Desktop-aware ✔
- * Zero bot, zero gambiarra ✔
  */
 
 const APP_STATE = {
@@ -22,7 +19,8 @@ const APP_STATE = {
 
     translationCache: new Map(),
 
-    API_URL: 'https://kjdrex-ip-31-57-60-2.tunnelmole.net',
+    // 🔗 LINK MANUAL: Atualize aqui quando o Tunnelmole mudar
+    API_URL: 'https://tfaj1y-ip-31-57-60-2.tunnelmole.net',
 
     isSearching: false,
     isDesktop: window.matchMedia('(min-width: 1024px)').matches
@@ -35,14 +33,19 @@ const APP_STATE = {
 const qs = s => document.querySelector(s);
 const qsa = s => [...document.querySelectorAll(s)];
 
-function api(endpoint) {
-    return fetch(`${APP_STATE.API_URL}${endpoint}`)
-        .then(r => r.ok ? r.json() : null)
-        .catch(() => null);
+async function api(endpoint) {
+    try {
+        const r = await fetch(`${APP_STATE.API_URL}${endpoint}`);
+        if (!r.ok) throw new Error();
+        return await r.json();
+    } catch (e) {
+        console.error("❌ Erro de conexão com a API. Verifique o link do Tunnelmole.");
+        return null;
+    }
 }
 
 /* ────────────────────────────────────────────── */
-/* 2. RESPONSIVE AWARENESS (MOBILE x DESKTOP) */
+/* 2. RESPONSIVE AWARENESS */
 /* ────────────────────────────────────────────── */
 
 window.addEventListener('resize', () => {
@@ -71,23 +74,19 @@ async function traduzir(texto) {
 }
 
 /* ────────────────────────────────────────────── */
-/* 4. ABAS (MÚSICA / ANIME) */
+/* 4. ABAS */
 /* ────────────────────────────────────────────── */
 
 function setSearchType(type) {
     APP_STATE.searchType = type;
-
     qsa('.tab-btn').forEach(b => b.classList.remove('active'));
     qs(`#type-${type}`)?.classList.add('active');
-
-    qs('#search-input').placeholder =
-        type === 'music' ? 'Buscar música ou artista...' : 'Buscar anime...';
-
+    qs('#search-input').placeholder = type === 'music' ? 'Buscar música ou artista...' : 'Buscar anime...';
     renderFavoritos();
 }
 
 /* ────────────────────────────────────────────── */
-/* 5. FAVORITOS (SEPARADOS) */
+/* 5. FAVORITOS */
 /* ────────────────────────────────────────────── */
 
 function renderFavoritos() {
@@ -95,7 +94,6 @@ function renderFavoritos() {
     if (!wrapper) return;
 
     const lista = APP_STATE.favoritos[APP_STATE.searchType];
-
     if (!lista.length) {
         wrapper.innerHTML = `<p class="empty">Coleção vazia</p>`;
         return;
@@ -121,12 +119,11 @@ function toggleFavorito(id) {
 
     if (idx > -1) list.splice(idx, 1);
     localStorage.setItem(`pg_favs_${type}`, JSON.stringify(list));
-
     renderFavoritos();
 }
 
 /* ────────────────────────────────────────────── */
-/* 6. BUSCA */
+/* 6. BUSCA (SINCRONIZADA COM V15.0) */
 /* ────────────────────────────────────────────── */
 
 async function buscar() {
@@ -138,10 +135,11 @@ async function buscar() {
 
     try {
         if (APP_STATE.searchType === 'music') {
+            // O server.js v15.0 já otimiza a busca com "rap geek"
             const tracks = await api(`/search?q=${encodeURIComponent(q)}`);
             renderMusicas(tracks || []);
         } else {
-            const res = await fetch(`https://api.jikan.moe/v4/anime?q=${q}&limit=12`);
+            const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=12`);
             const { data } = await res.json();
             renderAnimes(data || []);
         }
@@ -157,6 +155,10 @@ async function buscar() {
 function renderMusicas(tracks) {
     APP_STATE.fila = tracks;
     const list = qs('#music-results');
+    if (!tracks.length) {
+        list.innerHTML = `<p class="empty">Nenhum resultado encontrado.</p>`;
+        return;
+    }
 
     list.innerHTML = tracks.map((t, i) => `
         <div class="track-card" onclick="abrirPlayerFila(${i})">
@@ -171,7 +173,6 @@ function renderMusicas(tracks) {
 
 async function renderAnimes(data) {
     const list = qs('#music-results');
-
     const html = await Promise.all(data.map(async a => `
         <div class="anime-card" onclick="verDetalhesAnime(${a.mal_id})">
             <img src="${a.images.jpg.image_url}">
@@ -181,12 +182,11 @@ async function renderAnimes(data) {
             </div>
         </div>
     `));
-
     list.innerHTML = html.join('');
 }
 
 /* ────────────────────────────────────────────── */
-/* 8. PLAYER (DESKTOP ≠ MOBILE) */
+/* 8. PLAYER CORE */
 /* ────────────────────────────────────────────── */
 
 function abrirPlayer(id, title, author) {
@@ -195,18 +195,17 @@ function abrirPlayer(id, title, author) {
 
     if (APP_STATE.player) {
         APP_STATE.player.loadVideoById(id);
-        return;
-    }
-
-    APP_STATE.player = new YT.Player('youtube-player', {
-        videoId: id,
-        playerVars: { autoplay: 1, controls: APP_STATE.isDesktop ? 1 : 0 },
-        events: {
-            onStateChange: e => {
-                if (e.data === YT.PlayerState.ENDED) proxima();
+    } else {
+        APP_STATE.player = new YT.Player('youtube-player', {
+            videoId: id,
+            playerVars: { autoplay: 1, controls: APP_STATE.isDesktop ? 1 : 0 },
+            events: {
+                onStateChange: e => {
+                    if (e.data === YT.PlayerState.ENDED) proxima();
+                }
             }
-        }
-    });
+        });
+    }
 
     if (!APP_STATE.isDesktop) abrirModalPlayer();
 }
@@ -214,7 +213,7 @@ function abrirPlayer(id, title, author) {
 function abrirPlayerFila(i) {
     APP_STATE.filaIndex = i;
     const t = APP_STATE.fila[i];
-    abrirPlayer(t.id, t.title, t.author);
+    if (t) abrirPlayer(t.id, t.title, t.author);
 }
 
 function abrirPlayerAvulso(id, title, author) {
@@ -229,13 +228,21 @@ function proxima() {
 }
 
 /* ────────────────────────────────────────────── */
-/* 9. DOWNLOAD */
+/* 9. DOWNLOAD (STREAM DIRETO - V15.0 COMPATIBLE) */
 /* ────────────────────────────────────────────── */
 
 function baixar(formato) {
     const t = APP_STATE.fila[APP_STATE.filaIndex];
-    if (!t) return;
-    window.open(`${APP_STATE.API_URL}/download?id=${t.id}&type=${formato}`, '_blank');
+    if (!t) {
+        alert("Selecione uma música primeiro!");
+        return;
+    }
+
+    // Como o server.js v15.0 usa streams, o navegador iniciará o download instantaneamente
+    const url = `${APP_STATE.API_URL}/download?id=${t.id}&type=${formato}`;
+    
+    // Abre em uma nova aba/janela para disparar o header de anexo sem sair da página
+    window.open(url, '_blank');
 }
 
 /* ────────────────────────────────────────────── */
@@ -262,3 +269,4 @@ function renderSkeletons() {
 document.addEventListener('DOMContentLoaded', () => {
     setSearchType('music');
 });
+
