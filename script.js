@@ -16,7 +16,7 @@ const APP_STATE = {
     swiperInstance: null,
 
     // 🔗 LINK DO SERVER (Ajuste conforme o Tunnelmole informar)
-    API_URL: 'https://zgsn6d-ip-31-57-60-2.tunnelmole.net',
+    API_URL: 'https://7audnx-ip-31-57-60-2.tunnelmole.net',
     isSearching: false
 };
 
