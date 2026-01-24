@@ -1,18 +1,18 @@
 /* =====================================================
-   1. VARIÁVEIS — PALETA NEON / GLASS
+   1. VARIÁVEIS & DESIGN SYSTEM
 ===================================================== */
 :root {
   --bg-dark: #070708;
-  --bg-card: rgba(255, 255, 255, 0.035);
-  --bg-modal: #0c0c0e;
+  --bg-card: rgba(255, 255, 255, 0.03);
   --violet: #7c3aed;
   --fuchsia: #d946ef;
-  --accent-glow: rgba(124, 58, 237, 0.4);
   --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.03);
+  --accent-glow: rgba(124, 58, 237, 0.3);
 }
 
 /* =====================================================
-   2. RESET & BASE
+   2. RESET & GLASS EFFECTS
 ===================================================== */
 * {
   margin: 0;
@@ -29,10 +29,23 @@ body {
   overscroll-behavior: none;
 }
 
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
 /* =====================================================
-   3. RESULTADOS & PLAYLIST
+   3. RESULTADOS (MÚSICAS & ANIMES)
 ===================================================== */
-.track-card {
+#music-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.track-card, .anime-card {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -41,108 +54,83 @@ body {
   border: 1px solid var(--border);
   border-radius: 1.5rem;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: entrance 0.5s forwards;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  animation: entrance 0.5s ease forwards;
 }
 
-.track-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+.track-card:hover, .anime-card:hover {
+  background: rgba(255, 255, 255, 0.07);
   border-color: var(--violet);
-  transform: scale(1.02);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.track-card img {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  object-fit: cover;
-}
+.track-card img { width: 56px; height: 56px; border-radius: 1rem; object-fit: cover; }
+.anime-card img { width: 56px; height: 80px; border-radius: 1rem; object-fit: cover; }
 
-.track-actions {
-  margin-left: auto;
-  display: flex;
-  gap: 8px;
-}
-
-.track-actions button {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  width: 35px;
-  height: 35px;
-  border-radius: 10px;
-  color: white;
-  transition: 0.2s;
-}
-
-.track-actions button:hover { background: var(--violet); }
-
-/* Playlist Horizontal (Minha Coleção) */
-#favorites-wrapper {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  scrollbar-width: none; /* Firefox */
-}
-
-#favorites-wrapper::-webkit-scrollbar { display: none; }
-
-.fav-card {
-  flex: 0 0 120px;
-  position: relative;
-  transition: 0.3s;
-}
-
-.fav-card img {
-  width: 120px;
-  height: 120px;
-  border-radius: 20px;
-  object-fit: cover;
-  border: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-
-.fav-card span {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
+.track-card strong, .anime-card strong {
   display: block;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.fav-card button {
-  position: absolute;
-  top: 5px; right: 5px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  border-radius: 50%;
-  width: 24px; height: 24px;
-  font-size: 10px;
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 800;
+  text-transform: uppercase;
+  italic: true;
 }
 
 /* =====================================================
-   4. PLAYER MODAL & CONTROLES
+   4. SWIPER FAVORITOS
 ===================================================== */
-#player-modal {
+.favSwiper {
+  width: 100%;
+  padding: 10px 0 20px 0;
+}
+
+.swiper-slide {
+  width: 130px !important; /* Largura das capas no carrossel */
+}
+
+.fav-card {
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.fav-card:active { transform: scale(0.95); }
+
+.fav-card img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 1.5rem;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+/* =====================================================
+   5. MODAIS (PLAYER & ANIME)
+===================================================== */
+.modal-full {
   position: fixed;
   inset: 0;
-  background: var(--bg-dark);
   z-index: 500;
-  transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  background: var(--bg-dark);
+  transition: all 0.6s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.player-container {
-  position: relative;
+.modal-full.hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Anime Modal Hero Section */
+#anime-modal-img {
   width: 100%;
-  border-radius: 2rem;
-  overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  height: 45vh;
+  object-fit: cover;
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 }
 
-/* O "Escudo" que bloqueia cliques no player do YouTube */
+/* Player Blocker Overlay */
 .player-blocker {
   position: absolute;
   inset: 0;
@@ -150,67 +138,64 @@ body {
   background: transparent;
 }
 
-#youtube-player {
-  width: 100%;
-  height: 100%;
-}
-
-/* Botões de Controle do Player */
-#btn-pause {
-  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
-}
-
-#btn-pause:active { transform: scale(0.9); }
-
 /* =====================================================
-   5. COMPONENTES E ANIMAÇÕES
+   6. BOTÕES & CONTROLES
 ===================================================== */
-.tab-btn.active {
-  background: linear-gradient(135deg, var(--violet), var(--fuchsia)) !important;
-  color: #fff !important;
-  box-shadow: 0 8px 20px var(--accent-glow);
+.tab-btn {
+  transition: all 0.3s ease;
+  color: rgba(255,255,255,0.4);
 }
 
 .btn-download {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 1.2rem;
+  font-weight: 900;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   transition: 0.3s;
-  backdrop-filter: blur(10px);
+}
+
+.btn-download:hover {
+  background: var(--violet);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+#btn-pause {
+  box-shadow: 0 15px 45px rgba(124, 58, 237, 0.4);
+}
+
+/* =====================================================
+   7. ANIMAÇÕES & UTILS
+===================================================== */
+@keyframes entrance {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .skeleton {
   width: 100%;
-  height: 70px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 1.2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes entrance {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  height: 80px;
+  background: linear-gradient(90deg, #0d0d0f 25%, #1a1a1e 50%, #0d0d0f 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: 1.5rem;
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* =====================================================
-   6. RESPONSIVIDADE
+   8. RESPONSIVIDADE
 ===================================================== */
 @media (min-width: 1024px) {
   #music-results {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
   }
 }
-
