@@ -25,7 +25,7 @@ const APP_STATE = {
     searchTimeout: null, // Timer para o Debounce
 
     // 🔗 SEU BACKEND (Verifique se o Tunnelmole está ativo neste link)
-    API_URL: 'https://b1cdkd-ip-31-57-60-2.tunnelmole.net' 
+    API_URL: 'https://8zd3sd-ip-31-57-60-2.tunnelmole.net' 
 };
 
 /* ───────────────────────────────────────────────────────────── */
